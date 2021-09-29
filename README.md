@@ -85,6 +85,7 @@ Contoh struktur direktori sebagai *berikut:*
 
 <p align="center">
 <a href="#"><img src="https://img.shields.io/github/forks/IF4008/PAPK-T5D?label=fork&style=social"alt="Fork"></a>
-<a href="#"><img src="https://img.shields.io/github/contributors/IF4008/PAPK-T5D" alt="Stars"></a>
-<a href="#"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+<a href="#"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors-anon/IF4008/PAPK-T5D?style=plastic">
+<a href="#"><img src="https://poser.pugx.org/laravel/framework/license.svg"alt="License"></a>
+<a href="#"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/IF4008/PAPK-T5D"></a>
 </p>
