@@ -1,0 +1,7 @@
+{
+  "name": "myPAPK-5D",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
