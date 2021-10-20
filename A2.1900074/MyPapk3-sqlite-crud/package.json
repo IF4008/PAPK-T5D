@@ -1,5 +1,5 @@
 {
-  "name": "myPapk",
+  "name": "MyPapk3-sqlite-crud",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -24,7 +24,10 @@
     "@capacitor/haptics": "1.1.2",
     "@capacitor/keyboard": "1.1.2",
     "@capacitor/status-bar": "1.0.5",
+    "@ionic-native/core": "^5.36.0",
+    "@ionic-native/sqlite": "^5.36.0",
     "@ionic/angular": "^5.5.2",
+    "cordova-sqlite-storage": "^6.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
@@ -41,6 +44,7 @@
     "@angular/language-service": "~12.0.1",
     "@capacitor/cli": "3.2.5",
     "@ionic/angular-toolkit": "^4.0.0",
+    "@ionic/lab": "3.2.10",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
