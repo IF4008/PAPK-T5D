@@ -1,0 +1,7 @@
+{
+  "name": "myPapk3-sqlite-crud",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
