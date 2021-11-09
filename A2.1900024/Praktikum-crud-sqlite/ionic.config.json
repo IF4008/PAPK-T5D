@@ -1,0 +1,10 @@
+{
+  "name": "Praktikum-crud-sqlite",
+  "integrations": {
+    "capacitor": {
+      "enabled": false
+    },
+    "cordova": {}
+  },
+  "type": "angular"
+}
