@@ -1,0 +1,10 @@
+{
+  "name": "MyPapk3-sqlite-crud",
+  "integrations": {
+    "capacitor": {
+      "enabled": false
+    },
+    "cordova": {}
+  },
+  "type": "angular"
+}
