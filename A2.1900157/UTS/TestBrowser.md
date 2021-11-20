@@ -1,6 +1,6 @@
 Nama    : Rizqi Ramadan
 NIM     : A2.1900157
-Kelas   : TI-VD
+
 
 Tugas UTS
 
