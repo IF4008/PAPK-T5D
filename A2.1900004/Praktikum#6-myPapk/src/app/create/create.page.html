@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-title>myPapk Crud With SQLite</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Create -->
+  <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input [(ngModel)]="nameVal"></ion-input>
+  </ion-item>
+
+  <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input [(ngModel)]="emailVal"></ion-input>
+  </ion-item>
+
+  <ion-button color="success" expand="block" (click)="createUser()">
+      Add User
+  </ion-button>
+
+  <!-- Read -->
+  <ion-item *ngFor="let user of crud.USERS">
+      <ion-label>
+          <h2><strong>{{ user.name }}</strong></h2>
+          <p>{{ user.email }}</p>
+      </ion-label>
+
+      <div class="item-note" item-end>
+          <ion-icon color="primary" name="create" style="zoom:1.3" [routerLink]="['/edit/', user.user_id]"></ion-icon>
+
+          <ion-icon color="danger" name="trash" style="zoom:1.3" (click)="remove(user.user_id)"></ion-icon>
+      </div>
+  </ion-item>
+</ion-content>
