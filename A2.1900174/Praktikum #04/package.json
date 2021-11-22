@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-devkit/architect": "^0.1300.3",
     "@angular/common": "~12.1.1",
     "@angular/core": "~12.1.1",
     "@angular/forms": "~12.1.1",
@@ -30,6 +31,7 @@
     "cordova-sqlite-storage": "^6.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
+    "webpack": "^5.64.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -88,8 +90,8 @@
       "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "android",
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }
