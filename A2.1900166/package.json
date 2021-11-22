@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@ionic-native/sqlite": "^5.36.0"
+  }
+}
