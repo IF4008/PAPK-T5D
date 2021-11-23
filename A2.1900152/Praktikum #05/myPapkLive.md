@@ -1,1 +1,0 @@
-[![My Papk Live](https://res.cloudinary.com/marcomontalbano/image/upload/v1636789458/video_to_markdown/images/youtube--1ZommGFZjqA-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://youtu.be/1ZommGFZjqA "My Papk Live")
