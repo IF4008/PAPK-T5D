@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Form Tambah Data</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12>
+      <from [formGroup]="FormSimpanData" (ngSubmit)="simpan()">
+        <ion-item>
+          <ion-label color="primary" position="stacked">Nama Barang</ion-label>
+          <ion-input type="text" formControlName="nama_barang"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="stacked">Qty</ion-label>
+          <ion-input type="text" formControlName="qty"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label color="primary" position="stacked">Harga</ion-label>
+          <ion-input type="text" formControlName="harga"></ion-input> 
+        </ion-item>
+        <ion-button
+        expand="black"
+        type="submit"
+        color="primary"
+        [disabled]="!FormSimpanData.valid">Simpan</ion-button>
+        </from>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
