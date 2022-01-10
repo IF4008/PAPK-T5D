@@ -2,24 +2,27 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim;
 
 use FastRoute\Dispatcher;
+use Psr\Container\ContainerInterface;
+use InvalidArgumentException;
+use RuntimeException;
+use Psr\Http\Message\ServerRequestInterface;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser;
 use FastRoute\RouteParser\Std as StdParser;
-use InvalidArgumentException;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
-use RuntimeException;
-use Slim\Interfaces\RouteInterface;
+use Slim\Interfaces\RouteGroupInterface;
 use Slim\Interfaces\RouterInterface;
+use Slim\Interfaces\RouteInterface;
 
 /**
+ * Router
+ *
  * This class organizes Slim application route objects. It is responsible
  * for registering route objects, assigning names to route objects,
  * finding routes that match the current HTTP request, and creating
@@ -37,7 +40,7 @@ class Router implements RouterInterface
     /**
      * Parser
      *
-     * @var RouteParser
+     * @var \FastRoute\RouteParser
      */
     protected $routeParser;
 
@@ -76,11 +79,13 @@ class Router implements RouterInterface
     protected $routeGroups = [];
 
     /**
-     * @var Dispatcher
+     * @var \FastRoute\Dispatcher
      */
     protected $dispatcher;
 
     /**
+     * Create new router
+     *
      * @param RouteParser   $parser
      */
     public function __construct(RouteParser $parser = null)
@@ -93,8 +98,7 @@ class Router implements RouterInterface
      *
      * @param string $basePath
      *
-     * @return static
-     * @throws InvalidArgumentException
+     * @return self
      */
     public function setBasePath($basePath)
     {
@@ -122,30 +126,21 @@ class Router implements RouterInterface
      *
      * @param string|false $cacheFile
      *
-     * @return static
-     *
-     * @throws InvalidArgumentException If cacheFile is not a string or not false
-     * @throws RuntimeException         If cacheFile directory is not writable
+     * @return self
      */
     public function setCacheFile($cacheFile)
     {
         if (!is_string($cacheFile) && $cacheFile !== false) {
-            throw new InvalidArgumentException('Router cache file must be a string or false');
-        }
-
-        if ($cacheFile && file_exists($cacheFile) && !is_readable($cacheFile)) {
-            throw new RuntimeException(
-                sprintf('Router cache file `%s` is not readable', $cacheFile)
-            );
-        }
-
-        if ($cacheFile && !file_exists($cacheFile) && !is_writable(dirname($cacheFile))) {
-            throw new RuntimeException(
-                sprintf('Router cache file directory `%s` is not writable', dirname($cacheFile))
-            );
+            throw new InvalidArgumentException('Router cacheFile must be a string or false');
         }
 
         $this->cacheFile = $cacheFile;
+
+        if ($cacheFile !== false && !is_writable(dirname($cacheFile))) {
+            throw new RuntimeException('Router cacheFile directory must be writable');
+        }
+
+
         return $this;
     }
 
@@ -158,7 +153,15 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Add route
+     *
+     * @param  string[] $methods Array of HTTP methods
+     * @param  string   $pattern The route pattern
+     * @param  callable $handler The route callable
+     *
+     * @return RouteInterface
+     *
+     * @throws InvalidArgumentException if the route pattern isn't a string
      */
     public function map($methods, $pattern, $handler)
     {
@@ -174,9 +177,9 @@ class Router implements RouterInterface
         // According to RFC methods are defined in uppercase (See RFC 7231)
         $methods = array_map("strtoupper", $methods);
 
-        /** @var Route $route */
+        /** @var \Slim\Route */
         $route = $this->createRoute($methods, $pattern, $handler);
-
+        // Add route
         $this->routes[$route->getIdentifier()] = $route;
         $this->routeCounter++;
 
@@ -184,7 +187,13 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Dispatch router for HTTP request
+     *
+     * @param  ServerRequestInterface $request The current HTTP request object
+     *
+     * @return array
+     *
+     * @link   https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
      */
     public function dispatch(ServerRequestInterface $request)
     {
@@ -203,7 +212,7 @@ class Router implements RouterInterface
      * @param  string   $pattern The route pattern
      * @param  callable $callable The route callable
      *
-     * @return RouteInterface
+     * @return \Slim\Interfaces\RouteInterface
      */
     protected function createRoute($methods, $pattern, $callable)
     {
@@ -216,7 +225,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @return Dispatcher
+     * @return \FastRoute\Dispatcher
      */
     protected function createDispatcher()
     {
@@ -245,7 +254,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @param Dispatcher $dispatcher
+     * @param \FastRoute\Dispatcher $dispatcher
      */
     public function setDispatcher(Dispatcher $dispatcher)
     {
@@ -263,7 +272,13 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get named route object
+     *
+     * @param string $name        Route name
+     *
+     * @return Route
+     *
+     * @throws RuntimeException   If named route does not exist
      */
     public function getNamedRoute($name)
     {
@@ -305,7 +320,12 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Add a route group to the array
+     *
+     * @param string   $pattern
+     * @param callable $callable
+     *
+     * @return RouteGroupInterface
      */
     public function pushGroup($pattern, $callable)
     {
@@ -315,7 +335,9 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Removes the last route group from the array
+     *
+     * @return RouteGroup|bool The RouteGroup if successful, else False
      */
     public function popGroup()
     {
@@ -324,7 +346,9 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     *
+     * @param string $identifier
+     * @return \Slim\Interfaces\RouteInterface
      */
     public function lookupRoute($identifier)
     {
@@ -335,7 +359,16 @@ class Router implements RouterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Build the path for a named route excluding the base path
+     *
+     * @param string $name        Route name
+     * @param array  $data        Named argument replacement data
+     * @param array  $queryParams Optional query string parameters
+     *
+     * @return string
+     *
+     * @throws RuntimeException         If named route does not exist
+     * @throws InvalidArgumentException If required data not provided
      */
     public function relativePathFor($name, array $data = [], array $queryParams = [])
     {
@@ -382,24 +415,13 @@ class Router implements RouterInterface
         }
         $url = implode('', $segments);
 
-        $hasQueryParams = array_filter($queryParams, function ($value) {
-            return $value !== null;
-        }) !== [];
-
-        if ($hasQueryParams) {
+        if ($queryParams) {
             $url .= '?' . http_build_query($queryParams);
         }
 
         return $url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function pathFor($name, array $data = [], array $queryParams = [])
-    {
-        return $this->urlFor($name, $data, $queryParams);
-    }
 
     /**
      * Build the path for a named route including the base path
@@ -413,7 +435,7 @@ class Router implements RouterInterface
      * @throws RuntimeException         If named route does not exist
      * @throws InvalidArgumentException If required data not provided
      */
-    public function urlFor($name, array $data = [], array $queryParams = [])
+    public function pathFor($name, array $data = [], array $queryParams = [])
     {
         $url = $this->relativePathFor($name, $data, $queryParams);
 
@@ -425,25 +447,22 @@ class Router implements RouterInterface
     }
 
     /**
-     * Get fully qualified URL for named route
+     * Build the path for a named route.
      *
-     * @param UriInterface $uri
-     * @param string $routeName
-     * @param array $data Named argument replacement data
-     * @param array $queryParams Optional query string parameters
+     * This method is deprecated. Use pathFor() from now on.
+     *
+     * @param string $name        Route name
+     * @param array  $data        Named argument replacement data
+     * @param array  $queryParams Optional query string parameters
      *
      * @return string
      *
      * @throws RuntimeException         If named route does not exist
      * @throws InvalidArgumentException If required data not provided
      */
-    public function fullUrlFor(UriInterface $uri, $routeName, array $data = [], array $queryParams = [])
+    public function urlFor($name, array $data = [], array $queryParams = [])
     {
-        $path = $this->urlFor($routeName, $data, $queryParams);
-        $scheme = $uri->getScheme();
-        $authority = $uri->getAuthority();
-        $protocol = ($scheme ? $scheme . ':' : '') . ($authority ? '//' . $authority : '');
-
-        return $protocol . $path;
+        trigger_error('urlFor() is deprecated. Use pathFor() instead.', E_USER_DEPRECATED);
+        return $this->pathFor($name, $data, $queryParams);
     }
 }

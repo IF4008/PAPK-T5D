@@ -2,24 +2,32 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim\Handlers;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Body;
 use UnexpectedValueException;
 
+/**
+ * Default Slim application not found handler.
+ *
+ * It outputs a simple message in either JSON, XML or HTML based on the
+ * Accept header.
+ */
 class NotFound extends AbstractHandler
 {
     /**
+     * Invoke not found handler
+     *
      * @param  ServerRequestInterface $request  The most recent Request object
      * @param  ResponseInterface      $response The most recent Response object
      *
      * @return ResponseInterface
-     *
      * @throws UnexpectedValueException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
@@ -59,7 +67,7 @@ class NotFound extends AbstractHandler
     /**
      * Render plain not found message
      *
-     * @return string
+     * @return ResponseInterface
      */
     protected function renderPlainNotFoundOutput()
     {
@@ -69,7 +77,7 @@ class NotFound extends AbstractHandler
     /**
      * Return a response for application/json content not found
      *
-     * @return string
+     * @return ResponseInterface
      */
     protected function renderJsonNotFoundOutput()
     {
@@ -79,7 +87,7 @@ class NotFound extends AbstractHandler
     /**
      * Return a response for xml content not found
      *
-     * @return string
+     * @return ResponseInterface
      */
     protected function renderXmlNotFoundOutput()
     {
@@ -89,9 +97,9 @@ class NotFound extends AbstractHandler
     /**
      * Return a response for text/html content not found
      *
-     * @param  ServerRequestInterface $request The most recent Request object
+     * @param  ServerRequestInterface $request  The most recent Request object
      *
-     * @return string
+     * @return ResponseInterface
      */
     protected function renderHtmlNotFoundOutput(ServerRequestInterface $request)
     {

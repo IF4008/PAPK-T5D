@@ -2,14 +2,19 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim\Exception;
 
-use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;
+use Interop\Container\Exception\NotFoundException as InteropNotFoundException;
 
-class ContainerValueNotFoundException extends RuntimeException implements NotFoundExceptionInterface
+/**
+ * Not Found Exception
+ */
+class ContainerValueNotFoundException extends RuntimeException implements InteropNotFoundException
 {
+
 }
