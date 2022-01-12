@@ -2,18 +2,21 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim\Http;
 
+use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use RuntimeException;
 
 /**
- * Represents an uploaded file according to the PSR-7 standard.
+ * Represents Uploaded Files.
+ *
+ * It manages and normalizes uploaded files according to the PSR-7 standard.
  *
  * @link https://github.com/php-fig/http-message/blob/master/src/UploadedFileInterface.php
  * @link https://github.com/php-fig/http-message/blob/master/src/StreamInterface.php
@@ -28,49 +31,42 @@ class UploadedFile implements UploadedFileInterface
      * @var string
      */
     public $file;
-
     /**
      * The client-provided file name.
      *
      * @var string
      */
     protected $name;
-
     /**
      * The client-provided media type of the file.
      *
      * @var string
      */
     protected $type;
-
     /**
      * The size of the file in bytes.
      *
      * @var int
      */
     protected $size;
-
     /**
      * A valid PHP UPLOAD_ERR_xxx code for the file upload.
      *
      * @var int
      */
     protected $error = UPLOAD_ERR_OK;
-
     /**
      * Indicates if the upload is from a SAPI environment.
      *
      * @var bool
      */
     protected $sapi = false;
-
     /**
      * An optional StreamInterface wrapping the file resource.
      *
      * @var StreamInterface
      */
     protected $stream;
-
     /**
      * Indicates if the uploaded file has already been moved.
      *
@@ -81,11 +77,9 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Create a normalized tree of UploadedFile instances from the Environment.
      *
-     * Returns a normalized tree of UploadedFile instances or null if none are provided.
-     *
      * @param Environment $env The environment
      *
-     * @return array|null
+     * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
      */
     public static function createFromEnvironment(Environment $env)
     {
@@ -101,11 +95,9 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
      *
-     * Returns a normalized tree of UploadedFile instances.
-     *
      * @param array $uploadedFiles The non-normalized tree of uploaded file data.
      *
-     * @return array
+     * @return array A normalized tree of UploadedFile instances.
      */
     private static function parseUploadedFiles(array $uploadedFiles)
     {
@@ -147,6 +139,8 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     * Construct a new UploadedFile instance.
+     *
      * @param string      $file The full path to the uploaded file provided by the client.
      * @param string|null $name The file name.
      * @param string|null $type The file media type.
@@ -176,14 +170,14 @@ class UploadedFile implements UploadedFileInterface
      * If the moveTo() method has been called previously, this method MUST raise
      * an exception.
      *
-     * @return StreamInterface
-     *
-     * @throws RuntimeException in cases when no stream is available or can be created.
+     * @return StreamInterface Stream representation of the uploaded file.
+     * @throws \RuntimeException in cases when no stream is available or can be
+     *     created.
      */
     public function getStream()
     {
         if ($this->moved) {
-            throw new RuntimeException(sprintf('Uploaded file %s has already been moved', $this->name));
+            throw new \RuntimeException(sprintf('Uploaded file %s has already been moved', $this->name));
         }
         if ($this->stream === null) {
             $this->stream = new Stream(fopen($this->file, 'r'));
@@ -222,8 +216,9 @@ class UploadedFile implements UploadedFileInterface
      *
      * @param string $targetPath Path to which to move the uploaded file.
      *
-     * @throws InvalidArgumentException If the $path specified is invalid.
-     * @throws RuntimeException On any error during the move operation or on the second subsequent call to the method.
+     * @throws InvalidArgumentException if the $path specified is invalid.
+     * @throws RuntimeException on any error during the move operation, or on
+     *     the second or subsequent call to the method.
      */
     public function moveTo($targetPath)
     {
@@ -273,7 +268,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @see http://php.net/manual/en/features.file-upload.errors.php
      *
-     * @return int
+     * @return int One of PHP's UPLOAD_ERR_XXX constants.
      */
     public function getError()
     {
@@ -290,7 +285,8 @@ class UploadedFile implements UploadedFileInterface
      * Implementations SHOULD return the value stored in the "name" key of
      * the file in the $_FILES array.
      *
-     * @return string|null
+     * @return string|null The filename sent by the client or null if none
+     *     was provided.
      */
     public function getClientFilename()
     {
@@ -307,7 +303,8 @@ class UploadedFile implements UploadedFileInterface
      * Implementations SHOULD return the value stored in the "type" key of
      * the file in the $_FILES array.
      *
-     * @return string|null
+     * @return string|null The media type sent by the client or null if none
+     *     was provided.
      */
     public function getClientMediaType()
     {
@@ -321,7 +318,7 @@ class UploadedFile implements UploadedFileInterface
      * the file in the $_FILES array if available, as PHP calculates this based
      * on the actual size transmitted.
      *
-     * @return int|null
+     * @return int|null The file size in bytes or null if unknown.
      */
     public function getSize()
     {

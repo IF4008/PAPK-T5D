@@ -2,19 +2,22 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim;
 
-use Closure;
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Handlers\Strategies\RequestResponse;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteInterface;
 
+/**
+ * Route
+ */
 class Route extends Routable implements RouteInterface
 {
     use MiddlewareAwareTrait;
@@ -73,20 +76,33 @@ class Route extends Routable implements RouteInterface
     protected $savedArguments = [];
 
     /**
-     * @param string|string[] $methods The route HTTP methods
-     * @param string          $pattern The route pattern
-     * @param callable        $callable The route callable
-     * @param RouteGroup[]    $groups The parent route groups
-     * @param int             $identifier The route identifier
+     * The callable payload
+     *
+     * @var callable
+     */
+    protected $callable;
+
+    /**
+     * Create new route
+     *
+     * @param string|string[]   $methods The route HTTP methods
+     * @param string            $pattern The route pattern
+     * @param callable          $callable The route callable
+     * @param RouteGroup[]      $groups The parent route groups
+     * @param int               $identifier The route identifier
      */
     public function __construct($methods, $pattern, $callable, $groups = [], $identifier = 0)
     {
-        parent::__construct($pattern, $callable);
         $this->methods  = is_string($methods) ? [$methods] : $methods;
+        $this->pattern  = $pattern;
+        $this->callable = $callable;
         $this->groups   = $groups;
         $this->identifier = 'route' . $identifier;
     }
 
+    /**
+     * Finalize the route in preparation for dispatching
+     */
     public function finalize()
     {
         if ($this->finalized) {
@@ -120,7 +136,7 @@ class Route extends Routable implements RouteInterface
     /**
      * This method enables you to override the Route's callable
      *
-     * @param string|Closure $callable
+     * @param string|\Closure $callable
      */
     public function setCallable($callable)
     {
@@ -148,7 +164,9 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get route name
+     *
+     * @return null|string
      */
     public function getName()
     {
@@ -176,7 +194,15 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set output buffering mode
+     *
+     * One of: false, 'prepend' or 'append'
+     *
+     * @param boolean|string $mode
+     *
+     * @return self
+     *
+     * @throws InvalidArgumentException If an unknown buffering mode is specified
      */
     public function setOutputBuffering($mode)
     {
@@ -188,7 +214,13 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set route name
+     *
+     * @param string $name
+     *
+     * @return self
+     *
+     * @throws InvalidArgumentException if the route name is not a string
      */
     public function setName($name)
     {
@@ -200,7 +232,13 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set a route argument
+     *
+     * @param string $name
+     * @param string $value
+     * @param bool $includeInSavedArguments
+     *
+     * @return self
      */
     public function setArgument($name, $value, $includeInSavedArguments = true)
     {
@@ -212,7 +250,12 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Replace route arguments
+     *
+     * @param array $arguments
+     * @param bool $includeInSavedArguments
+     *
+     * @return self
      */
     public function setArguments(array $arguments, $includeInSavedArguments = true)
     {
@@ -224,7 +267,9 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieve route arguments
+     *
+     * @return array
      */
     public function getArguments()
     {
@@ -232,7 +277,12 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieve a specific route argument
+     *
+     * @param string $name
+     * @param string|null $default
+     *
+     * @return mixed
      */
     public function getArgument($name, $default = null)
     {
@@ -242,8 +292,15 @@ class Route extends Routable implements RouteInterface
         return $default;
     }
 
+    /********************************************************************************
+     * Route Runner
+     *******************************************************************************/
+
     /**
-     * {@inheritdoc}
+     * Prepare the route for use
+     *
+     * @param ServerRequestInterface $request
+     * @param array $arguments
      */
     public function prepare(ServerRequestInterface $request, array $arguments)
     {
@@ -257,7 +314,16 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Run route
+     *
+     * This method traverses the middleware stack, including the route's callable
+     * and captures the resultant HTTP response object. It then sends the response
+     * back to the Application.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
      */
     public function run(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -269,7 +335,16 @@ class Route extends Routable implements RouteInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Dispatch route callable against current Request and Response objects
+     *
+     * This method invokes the route object's callable. If middleware is
+     * registered for the route, each callable middleware is invoked in
+     * the order specified.
+     *
+     * @param ServerRequestInterface $request  The current Request object
+     * @param ResponseInterface      $response The current Response object
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception  if the route callable throws an exception
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {

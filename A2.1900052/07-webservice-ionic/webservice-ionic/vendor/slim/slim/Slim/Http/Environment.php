@@ -2,15 +2,18 @@
 /**
  * Slim Framework (https://slimframework.com)
  *
- * @license https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2017 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
  */
-
 namespace Slim\Http;
 
 use Slim\Collection;
 use Slim\Interfaces\Http\EnvironmentInterface;
 
 /**
+ * Environment
+ *
  * This class decouples the Slim application from the global PHP environment.
  * This is particularly useful for unit testing, but it also lets us create
  * custom sub-requests.
@@ -18,13 +21,17 @@ use Slim\Interfaces\Http\EnvironmentInterface;
 class Environment extends Collection implements EnvironmentInterface
 {
     /**
-     * {@inheritdoc}
+     * Create mock environment
+     *
+     * @param  array $userData Array of custom environment keys and values
+     *
+     * @return self
      */
-    public static function mock(array $settings = [])
+    public static function mock(array $userData = [])
     {
         //Validates if default protocol is HTTPS to set default port 443
-        if ((isset($settings['HTTPS']) && $settings['HTTPS'] !== 'off') ||
-            ((isset($settings['REQUEST_SCHEME']) && $settings['REQUEST_SCHEME'] === 'https'))) {
+        if ((isset($userData['HTTPS']) && $userData['HTTPS'] !== 'off') ||
+            ((isset($userData['REQUEST_SCHEME']) && $userData['REQUEST_SCHEME'] === 'https'))) {
             $defscheme = 'https';
             $defport = 443;
         } else {
@@ -49,7 +56,7 @@ class Environment extends Collection implements EnvironmentInterface
             'REMOTE_ADDR'          => '127.0.0.1',
             'REQUEST_TIME'         => time(),
             'REQUEST_TIME_FLOAT'   => microtime(true),
-        ], $settings);
+        ], $userData);
 
         return new static($data);
     }
