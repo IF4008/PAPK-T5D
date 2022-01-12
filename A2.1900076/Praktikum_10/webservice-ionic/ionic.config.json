@@ -1,0 +1,7 @@
+{
+  "name": "webservice-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
