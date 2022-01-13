@@ -1,0 +1,7 @@
+{
+  "name": "front-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
