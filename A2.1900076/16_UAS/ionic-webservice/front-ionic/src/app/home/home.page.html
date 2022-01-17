@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Home
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <h4 text-center><center>ABSENSI MAHASISWA FTI</center></h4>
+    <h6 text-center><center>UNSAP Sumedang</center></h6>
+    <ion-button color="primary" expand="block" routerLink="/form-input" routerDirection="forward">Tambah Data Absensi</ion-button>
+    <ion-grid >
+      <ion-row>
+        <ion-col col-12>
+            <table>
+              <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Nama Mahasiswa</th>
+                <th>Kelas</th>
+                <th>Keterangan</th>
+                <th>Aksi</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="Data_Absensi">
+                <tr *ngFor="let data of Data_Absensi">
+                  <td valign="top">{{data.tgl}}</td>
+                  <td valign="top">{{data.nama}}</td>
+                  <td valign="top">{{data.kelas}}</td>   
+                  <td valign="top">{{data.keterangan}}</td>
+                  <td valign="top">
+                    <ion-button color="danger" size="small" (click)="presentAlertConfirm(data.id_mhs)"><ion-icon name="trash"></ion-icon></ion-button>
+                    <ion-button color="secondary" size="small" routerLink="/form-edit/{{data.id_mhs}}" routerDirection="forward"><ion-icon name="create"></ion-icon></ion-button>
+                  </td>       
+                </tr>
+              </tbody>
+            </table>         
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
